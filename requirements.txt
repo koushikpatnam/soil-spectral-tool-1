@@ -1,0 +1,12 @@
+flask
+pandas
+joblib
+scikit-learn
+matplotlib
+python-ternary
+weasyprint
+fpdf
+reportlab
+seaborn
+tensorflow==2.*
+keras

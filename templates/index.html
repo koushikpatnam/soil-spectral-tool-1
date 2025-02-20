@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Health Dashboard</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', Arial, sans-serif;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background-color: #f4f4f9;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: #14213d;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header .logo img {
+            height: 50px;
+            transition: transform 0.3s ease;
+        }
+
+        .header .logo .title {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .header .links a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .header .links a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Tabs */
+        .tab-buttons {
+            display: flex;
+            justify-content: center;
+            margin: 20px auto;
+            background-color: #e8e8e8;
+            border-radius: 10px;
+            padding: 10px;
+            width: 90%;
+        }
+
+        .tab-button {
+            flex: 1;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 15px 0;
+            margin: 0 10px;
+            color: #14213d;
+            background-color: white;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            color: white;
+            background-color: #2a9d8f;
+            border-color: #2a9d8f;
+        }
+
+        .tab-button:hover {
+            transform: scale(1.05);
+        }
+
+        .content-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            width: 90%;
+            max-width: 900px;
+        }
+
+        .content-container.active {
+            display: flex;
+        }
+
+        .content-container h1 {
+            color: #14213d;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 600px;
+            gap: 15px;
+        }
+
+        form label {
+            font-size: 16px;
+            color: #333;
+        }
+
+        form select, form input, form button {
+            padding: 12px 15px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            background-color: #2a9d8f;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #21867a;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: #14213d;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: auto;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .footer a {
+            color: #4caf50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <script>
+        function openTab(tabName) {
+            const tabs = document.querySelectorAll('.content-container');
+            const buttons = document.querySelectorAll('.tab-button');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            buttons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        }
+
+        window.onload = function () {
+            openTab('predictionTab');
+        };
+    </script>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <img src="/static/logo.png" alt="UF IFAS Logo">
+            <div class="title">Soil Health Dashboard</div>
+        </div>
+
+        <div class="links">
+            <a href="#about">About the Project</a>
+            <a href="#feedback">Give Us Feedback!</a>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-buttons">
+        <div class="tab-button active" data-tab="predictionTab" onclick="openTab('predictionTab')">Prediction</div>
+    </div>
+
+    <!-- Prediction Tab Content -->
+    <div id="predictionTab" class="content-container active">
+        <h1>Upload CSV/Excel File for Prediction</h1>
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+            <label for="model_type">Select Model Type:</label>
+            <select name="model_type" id="model_type" required>
+                <option value="VNIR">VNIR</option>
+                <option value="MIR">MIR</option>
+            </select>
+
+            <label for="file">Choose CSV or Excel file:</label>
+            <input type="file" name="file" accept=".csv,.xlsx" required>
+
+            <button type="submit">Upload and Predict</button>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>&copy; 2024 UF IFAS Soil Health Dashboard. All Rights Reserved. | <a href="#contact">Contact Us</a></p>
+    </div>
+</body>
+</html>

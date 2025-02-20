@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prediction Results</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 90%;
+            margin: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Prediction Results</h1>
+
+    <!-- Prediction Table -->
+    <div>
+        {{ tables | safe }}
+    </div>
+
+    <!-- Download PDF Button -->
+    <button onclick="downloadPDF()">Download PDF</button>
+
+    <!-- Interactive Chart -->
+    <canvas id="predictionChart" width="800" height="400"></canvas>
+</div>
+
+<script>
+    // Function to trigger PDF download
+    function downloadPDF() {
+        window.location.href = "/download_pdf";
+    }
+
+    // Extract data from the table for chart visualization
+    const table = document.querySelector('table');
+    const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText);
+    const rows = Array.from(table.querySelectorAll('tr')).slice(1);  // Skip header
+
+    const labels = rows.map(row => row.cells[0].innerText);  // First column as labels (e.g., Sample IDs)
+    const datasets = [];
+
+    headers.slice(1).forEach((header, index) => {
+        const data = rows.map(row => parseFloat(row.cells[index + 1].innerText));  // Extract numeric values
+        const color = `hsl(${Math.random() * 360}, 70%, 60%)`;  // Random color for each line
+
+        datasets.push({
+            label: header,
+            data: data,
+            borderColor: color,
+            backgroundColor: color,
+            fill: false,
+            tension: 0.4,
+            pointRadius: 3,
+            pointHoverRadius: 6
+        });
+    });
+
+    // Render the chart using Chart.js
+    const ctx = document.getElementById('predictionChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Sample Number'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Prediction Value'
+                    },
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
